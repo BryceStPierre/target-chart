@@ -1,13 +1,19 @@
 import $ from 'jquery';
 import * as d3 from 'd3';
 
-var chart = document.getElementById('chart');
+import TargetChart from './chart/TargetChart';
 
-chart.style.height = "400px";
+var element = document.getElementById('chart');
+
+element.style.height = "400px";
 
 var measurements = {
-    clientW: chart.clientWidth,
-    clientH: chart.clientHeight
+    clientW: element.clientWidth,
+    clientH: element.clientHeight
 };
 
 console.log(measurements);
+
+var chart = new TargetChart(element, {});
+chart.data([]);
+chart.render();
