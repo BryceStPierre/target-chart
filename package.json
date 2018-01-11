@@ -1,0 +1,37 @@
+{
+  "name": "target-chart",
+  "version": "1.0.0",
+  "description": "A customizable target chart based upon D3.js that resembles a comparative histogram, with options such as comparison to +/- standard deviations, and more.",
+  "main": "index.js",
+  "scripts": {
+    "watch": "webpack --progress --watch",
+    "start": "webpack-dev-server --open",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BryceStPierre/target-chart.git"
+  },
+  "keywords": [
+    "target-chart",
+    "d3"
+  ],
+  "author": "Bryce St. Pierre",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BryceStPierre/target-chart/issues"
+  },
+  "homepage": "https://github.com/BryceStPierre/target-chart#readme",
+  "dependencies": {
+    "d3": "^4.12.2"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "jquery": "^3.2.1",
+    "uglifyjs-webpack-plugin": "^1.1.6",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.10.1"
+  }
+}
