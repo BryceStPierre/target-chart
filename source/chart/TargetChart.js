@@ -17,16 +17,18 @@ export default class TargetChart {
     }
 
     options (options) {
-        const minWidth = this._e.clientWidth < 200 ? 200 : this._e.clientWidth;
+        const minWidth = this._e.clientWidth >= 320 
+            ? this._e.clientWidth 
+            : 320;
         this._o = {
             bgColor: options.bgColor || 'transparent',
-            hiColor: options.hiColor || 'red',
-            loColor: options.loColor || 'blue',
+            highColor: options.highColor || 'red',
+            lowColor: options.lowColor || 'blue',
             textColor: options.textColor || '#111',
             font: options.font || 'sans-serif',
             fontSize: options.fontSize || 14,
-            height: options.height || 400,
-            minMaxMode: options.minMaxMode || false,
+            height: options.height || 350,
+            //minMaxMode: options.minMaxMode || false,
             width: options.width || minWidth
         }
         console.log(this._o);
@@ -40,6 +42,7 @@ export default class TargetChart {
         var w = this._o.width,
             h = this._o.height;
 
+        document.getElementById(this._e.id).innerHTML = '';
         var svg = d3.select(`#${this._e.id}`)
             .append('svg')
             .attr('width', w)
@@ -56,10 +59,49 @@ export default class TargetChart {
             svg.append('text')
                 .attr('text-anchor', 'middle')
                 .attr('x', w / 2)
-                .attr('y', h / 2 - 20)
+                .attr('y', h / 2 + 14)
                 .style('fill', this._o.textColor)
                 .text('No data.');
             return;
+        }
+
+        var boxes = this._d.map((d, i) => {
+            var e = svg.append('text').text(d.label || i);
+            var box = e.node().getBBox();
+            e.remove();
+            return { w: box.width, h: box.height };
+        });
+        var labelW = Math.max.apply(null, boxes.map(b => b.w));
+        var labelH = Math.max.apply(null, boxes.map(b => b.h));
+        /*console.log({
+            labelWidth: labelW,
+            labelHeight: labelH
+        });*/
+        const labelM = 5;
+
+        const labelC = labelM * 2 + labelW;
+        const barC = w - 2 * labelC;
+
+        var n = this._d.length;
+        const barCMT = 50;
+        const barM = 30;
+
+        const barH = ((h - barCMT) / n) - barM;
+
+        for (var y = barCMT, i = 0; y < h, i < n; y += (h - barCMT) / n, i++) {
+            svg.append('rect')
+                .attr('x', labelC)
+                .attr('y', y)
+                .attr('width', barC)
+                .attr('height', barH)
+                .style('fill', '#DDD');
+                
+            svg.append('text')
+                .attr('text-anchor', 'middle')
+                .attr('x', labelC / 2)
+                .attr('y', y + (barH / 2) + (this._o.fontSize / 2))
+                .attr('fill', this._o.textColor)
+                .text(this._d[i].label);
         }
     }
 }
