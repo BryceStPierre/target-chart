@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import * as d3 from 'd3';
 
 import TargetChart from './chart/TargetChart';
 
@@ -17,8 +16,8 @@ chart.data([
     { stdDev: 5.4, target: 16, value: 20, label: 'YYYYY' },
     { stdDev: 23, target: 60, value: 49, label: 'YYYYYY' }
 ]);
-//chart.render();
+chart.render();
 $(window).resize(function () {
     chart.render();
 });
-$(window).resize();
+//$(window).resize();

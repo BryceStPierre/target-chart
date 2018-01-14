@@ -1,5 +1,7 @@
 import * as d3 from 'd3';
 
+import textSize from './textSize';
+
 export default class TargetChart {
 
     constructor (...args) {
@@ -17,9 +19,6 @@ export default class TargetChart {
     }
 
     options (options) {
-        const minWidth = this._e.clientWidth >= 320 
-            ? this._e.clientWidth 
-            : 320;
         this._o = {
             bgColor: options.bgColor || 'transparent',
             highColor: options.highColor || 'red',
@@ -29,7 +28,9 @@ export default class TargetChart {
             fontSize: options.fontSize || 14,
             height: options.height || 350,
             //minMaxMode: options.minMaxMode || false,
-            width: options.width || minWidth
+            width: this._e.clientWidth >= 320
+                ? this._e.clientWidth
+                : 320
         }
         console.log(this._o);
     }
@@ -38,11 +39,17 @@ export default class TargetChart {
         this._d = data;
     }
 
+    reset () {
+        this._e.innerHTML = '';
+        this.options(this._o);
+    }
+
     render () {
+        this.reset();
+
         var w = this._o.width,
             h = this._o.height;
 
-        document.getElementById(this._e.id).innerHTML = '';
         var svg = d3.select(`#${this._e.id}`)
             .append('svg')
             .attr('width', w)
@@ -65,24 +72,30 @@ export default class TargetChart {
             return;
         }
 
-        var boxes = this._d.map((d, i) => {
+        var labelSize = textSize(svg, this._d.map(d => d.label));
+
+        /*var boxes = this._d.map((d, i) => {
             var e = svg.append('text').text(d.label || i);
             var box = e.node().getBBox();
             e.remove();
             return { w: box.width, h: box.height };
-        });
-        var labelW = Math.max.apply(null, boxes.map(b => b.w));
-        var labelH = Math.max.apply(null, boxes.map(b => b.h));
+        });*/
+        var labelW = labelSize.w; //Math.max.apply(null, boxes.map(b => b.w));
+        var labelH = labelSize.h; //Math.max.apply(null, boxes.map(b => b.h));
         /*console.log({
             labelWidth: labelW,
             labelHeight: labelH
         });*/
         const labelM = 5;
+        const valueM = 5;
 
         const labelC = labelM * 2 + labelW;
+        const valueC = valueM * 2 + labelW;
+
+        //const barC = w - (2 * labelC + 2 * valueC);
         const barC = w - 2 * labelC;
 
-        var n = this._d.length;
+        const n = this._d.length;
         const barCMT = 50;
         const barM = 30;
 
