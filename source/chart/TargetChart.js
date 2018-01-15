@@ -113,19 +113,26 @@ export default class TargetChart {
                 .attr('y', y)
                 .attr('width', barC)
                 .attr('height', barH)
-                .style('fill', '#DDD');
+                .style('fill', '#EEE');
 
-            const percentage = Math.abs(d.target - d.value) / d.stdDev;
-            //const barW = percentage * 
-            //var 
+            const barW = (Math.abs(d.target - d.value) / d.stdDev) * barC / 2;
+            const barX = below ? w / 2 - barW : w / 2;
 
             svg.append('rect')
-                .attr('x')
-                .attr('y')
-                .attr('width')
-                .attr('height')
-                .style('fill', )
+                .attr('x', barX)
+                .attr('y', y)
+                .attr('width', barW)
+                .attr('height', barH)
+                .style('fill', below ? this._o.lowColor : this._o.highColor);
                 
+            svg.append('circle')
+                .attr('cx', below ? barX : w / 2 + barW)
+                .attr('cy', y + barH / 2)
+                .attr('r', barH / 2 + barM / 2)
+                .style('fill', '#FFF')
+                .style('stroke', below ? this._o.lowColor : this._o.highColor)
+                .style('stroke-width', '1px');
+
             svg.append('text')
                 .attr('text-anchor', 'middle')
                 .attr('x', labelC / 2)
@@ -143,7 +150,7 @@ export default class TargetChart {
             svg.append('text')
                 .attr('text-anchor', 'middle')
                 .attr('x', below ? labelC + valueC / 2 : w - labelC - valueC / 2)
-                .attr('y', y + (barH / 2) + (this._o.fontSize / 2))
+                .attr('y', y + (barH / 2) + ((this._o.fontSize - 2) / 2))        // Tested -2 for precision?
                 .attr('fill', this._o.textColor)
                 .text(d.value);
         }
