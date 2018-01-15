@@ -16,10 +16,12 @@ export default class TargetChart {
             this.options(args[1]);
         }
         this.data(null);
+        this._c = null;
     }
 
     options (options) {
         this._o = {
+            barHeight: options.barHeight || 'null',
             bgColor: options.bgColor || 'transparent',
             highColor: options.highColor || 'red',
             lowColor: options.lowColor || 'blue',
@@ -37,6 +39,15 @@ export default class TargetChart {
 
     data (data) {
         this._d = data;
+
+        this._c = {
+            m: {
+                label: 5,
+                value: 5,
+                bar: 30,
+                top: 50
+            }
+        };
     }
 
     reset () {
@@ -73,20 +84,6 @@ export default class TargetChart {
         }
 
         var labelSize = textSize(svg, this._d.map(d => d.label));
-
-        /*var boxes = this._d.map((d, i) => {
-            var e = svg.append('text').text(d.label || i);
-            var box = e.node().getBBox();
-            e.remove();
-            return { w: box.width, h: box.height };
-        });*/
-        //var labelW = labelSize.w; //Math.max.apply(null, boxes.map(b => b.w));
-        //var labelH = labelSize.h; //Math.max.apply(null, boxes.map(b => b.h));
-        /*console.log({
-            labelWidth: labelW,
-            labelHeight: labelH
-        });*/
-
         var valueSize = textSize(svg, this._d.map(d => d.value.toString()))
 
         const labelM = 5;
@@ -96,7 +93,6 @@ export default class TargetChart {
         const valueC = valueM * 2 + valueSize.w;
 
         const barC = w - (2 * labelC + 2 * valueC);
-        //const barC = w - 2 * labelC;
 
         const n = this._d.length;
         const barCMT = 50;
