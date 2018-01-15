@@ -80,20 +80,23 @@ export default class TargetChart {
             e.remove();
             return { w: box.width, h: box.height };
         });*/
-        var labelW = labelSize.w; //Math.max.apply(null, boxes.map(b => b.w));
-        var labelH = labelSize.h; //Math.max.apply(null, boxes.map(b => b.h));
+        //var labelW = labelSize.w; //Math.max.apply(null, boxes.map(b => b.w));
+        //var labelH = labelSize.h; //Math.max.apply(null, boxes.map(b => b.h));
         /*console.log({
             labelWidth: labelW,
             labelHeight: labelH
         });*/
+
+        var valueSize = textSize(svg, this._d.map(d => d.value.toString()))
+
         const labelM = 5;
         const valueM = 5;
 
-        const labelC = labelM * 2 + labelW;
-        const valueC = valueM * 2 + labelW;
+        const labelC = labelM * 2 + labelSize.w;
+        const valueC = valueM * 2 + valueSize.w;
 
-        //const barC = w - (2 * labelC + 2 * valueC);
-        const barC = w - 2 * labelC;
+        const barC = w - (2 * labelC + 2 * valueC);
+        //const barC = w - 2 * labelC;
 
         const n = this._d.length;
         const barCMT = 50;
@@ -102,19 +105,47 @@ export default class TargetChart {
         const barH = ((h - barCMT) / n) - barM;
 
         for (var y = barCMT, i = 0; y < h, i < n; y += (h - barCMT) / n, i++) {
+            var d = this._d[i];
+            var below = d.value < d.target;
+
             svg.append('rect')
-                .attr('x', labelC)
+                .attr('x', labelC + valueC) //labelC
                 .attr('y', y)
                 .attr('width', barC)
                 .attr('height', barH)
                 .style('fill', '#DDD');
+
+            const percentage = Math.abs(d.target - d.value) / d.stdDev;
+            //const barW = percentage * 
+            //var 
+
+            svg.append('rect')
+                .attr('x')
+                .attr('y')
+                .attr('width')
+                .attr('height')
+                .style('fill', )
                 
             svg.append('text')
                 .attr('text-anchor', 'middle')
                 .attr('x', labelC / 2)
                 .attr('y', y + (barH / 2) + (this._o.fontSize / 2))
                 .attr('fill', this._o.textColor)
-                .text(this._d[i].label);
+                .text(d.label);
+
+            svg.append('text')
+                .attr('text-anchor', 'middle')
+                .attr('x', w - labelC / 2)
+                .attr('y', y + (barH / 2) + (this._o.fontSize / 2))
+                .attr('fill', this._o.textColor)
+                .text(d.label);
+
+            svg.append('text')
+                .attr('text-anchor', 'middle')
+                .attr('x', below ? labelC + valueC / 2 : w - labelC - valueC / 2)
+                .attr('y', y + (barH / 2) + (this._o.fontSize / 2))
+                .attr('fill', this._o.textColor)
+                .text(d.value);
         }
     }
 }
