@@ -44,8 +44,10 @@ export default class TargetChart {
             m: {
                 label: 5,
                 value: 5,
-                bar: 30,
-                top: 50
+                bar: 30
+            },
+            t: {
+                title: 50
             }
         };
     }
