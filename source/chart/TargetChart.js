@@ -15,13 +15,11 @@ export default class TargetChart {
             this._e = args[0];
             this.options(args[1]);
         }
-        this.data(null);
-        this._c = null;
     }
 
     options (options) {
         this._o = {
-            barHeight: options.barHeight || 'null',
+            barHeight: options.barHeight || 50,
             bgColor: options.bgColor || 'transparent',
             highColor: options.highColor || 'red',
             lowColor: options.lowColor || 'blue',
@@ -29,10 +27,7 @@ export default class TargetChart {
             font: options.font || 'sans-serif',
             fontSize: options.fontSize || 14,
             height: options.height || 350,
-            //minMaxMode: options.minMaxMode || false,
-            width: this._e.clientWidth >= 320
-                ? this._e.clientWidth
-                : 320
+            width: this._e.clientWidth >= 320 ? this._e.clientWidth : 320
         }
         console.log(this._o);
     }
@@ -44,12 +39,15 @@ export default class TargetChart {
             m: {
                 label: 5,
                 value: 5,
-                bar: 30
-            },
-            t: {
-                title: 50
+                title: 50,
+                bar: 3 * this._o.barHeight / 4
             }
         };
+
+        if (this._o.barHeight === null)
+            this._o.barHeight = ((this._o.height - this._c.m.title) / this._d.length) - this._c.m.bar;
+        else
+            this._o.height = this._c.m.title + this._d.length * (this._o.barHeight + this._c.m.bar);
     }
 
     reset () {
@@ -75,11 +73,11 @@ export default class TargetChart {
             .attr('height', h)
             .style('fill', this._o.bgColor);
 
-        if (this._d === null) {
+        if (!this._d || !this._c) {
             svg.append('text')
                 .attr('text-anchor', 'middle')
                 .attr('x', w / 2)
-                .attr('y', h / 2 + 14)
+                .attr('y', h / 2 + this._o.fontSize)
                 .style('fill', this._o.textColor)
                 .text('No data.');
             return;
@@ -88,33 +86,26 @@ export default class TargetChart {
         var labelSize = textSize(svg, this._d.map(d => d.label));
         var valueSize = textSize(svg, this._d.map(d => d.value.toString()))
 
-        const labelM = 5;
-        const valueM = 5;
-
-        const labelC = labelM * 2 + labelSize.w;
-        const valueC = valueM * 2 + valueSize.w;
-
-        const barC = w - (2 * labelC + 2 * valueC);
+        const labelC = this._c.m.label * 2 + labelSize.w;
+        const valueC = this._c.m.value * 2 + valueSize.w;
+        
+        const barH = this._o.barHeight;
+        const barC = w - (2 * labelC + 2 * valueC) - 2 * barH;
 
         const n = this._d.length;
-        const barCMT = 50;
-        const barM = 30;
 
-        const barH = ((h - barCMT) / n) - barM;
-
-        for (var y = barCMT, i = 0; y < h, i < n; y += (h - barCMT) / n, i++) {
-            var d = this._d[i];
-            var below = d.value < d.target;
+        for (var y = this._c.m.title, i = 0; y < h, i < n; y += barH + this._c.m.bar, i++) {
+            const d = this._d[i];
+            const below = d.value < d.target;
+            const barW = (Math.abs(d.target - d.value) / d.stdDev) * barC / 2;
+            const barX = below ? w / 2 - barW : w / 2;
 
             svg.append('rect')
-                .attr('x', labelC + valueC) //labelC
+                .attr('x', labelC + valueC + barH)
                 .attr('y', y)
                 .attr('width', barC)
                 .attr('height', barH)
                 .style('fill', '#EEE');
-
-            const barW = (Math.abs(d.target - d.value) / d.stdDev) * barC / 2;
-            const barX = below ? w / 2 - barW : w / 2;
 
             svg.append('rect')
                 .attr('x', barX)
@@ -126,7 +117,7 @@ export default class TargetChart {
             svg.append('circle')
                 .attr('cx', below ? barX : w / 2 + barW)
                 .attr('cy', y + barH / 2)
-                .attr('r', barH / 2 + barM / 2)
+                .attr('r', barH / 2 + this._o.fontSize / 2)
                 .style('fill', '#FFF')
                 .style('stroke', below ? this._o.lowColor : this._o.highColor)
                 .style('stroke-width', '1px');
