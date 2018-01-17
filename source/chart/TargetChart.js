@@ -1,7 +1,5 @@
 import * as d3 from 'd3';
 
-import textSize from './textSize';
-
 export default class TargetChart {
 
     constructor (...args) {
@@ -27,7 +25,7 @@ export default class TargetChart {
             fontSize: options.fontSize || 12,
             lowColor: options.lowColor || '#0072BB',
             showLabels: options.showLabels === undefined ? true : options.showLabels,
-            textColor: options.textColor || '#111',
+            textColor: options.textColor || '#111111',
             title: options.title || null,
             width: this._e.clientWidth >= 320 ? this._e.clientWidth : 320
         }
@@ -88,8 +86,8 @@ export default class TargetChart {
             return;
         }
 
-        var labelSize = textSize(svg, this._d.map(d => d.label));
-        var valueSize = textSize(svg, this._d.map(d => d.value.toString()))
+        var labelSize = this.textSize(svg, this._d.map(d => d.label));
+        var valueSize = this.textSize(svg, this._d.map(d => d.value.toString()))
 
         const labelC = this._c.m.label * 2 + labelSize.w;
         const valueC = this._c.m.value * 2 + valueSize.w;
@@ -218,5 +216,21 @@ export default class TargetChart {
                 .attr('fill', this._o.textColor)
                 .text(d.value);
         }
+    }
+    
+    textSize (selection, array) {
+        var boxes = array.map(d => {
+            var e = selection.append('text').text(d);
+            var box = e.node().getBBox();
+            e.remove();
+            return {
+                w: box.width,
+                h: box.height
+            };
+        });
+        return {
+            w: Math.max.apply(null, boxes.map(b => b.w)),
+            h: Math.max.apply(null, boxes.map(b => b.h))
+        };
     }
 }
