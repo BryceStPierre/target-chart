@@ -115,7 +115,7 @@ var TargetChart = function () {
                 var d = this._d[i];
                 var below = d.value < d.target;
 
-                var barP = Math.abs(d.target - d.value) / d.stdDev;
+                var barP = Math.abs(d.target - d.value) / d.std;
                 barP = barP > 1 ? 1 : barP;
 
                 var barW = barP * (barC / 2);

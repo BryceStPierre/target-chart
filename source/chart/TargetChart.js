@@ -155,7 +155,7 @@ export default class TargetChart {
             const d = this._d[i];
             const below = d.value < d.target;
 
-            var barP = Math.abs(d.target - d.value) / d.stdDev;
+            var barP = Math.abs(d.target - d.value) / d.std;
             barP = barP > 1 ? 1 : barP;
 
             const barW = barP * (barC / 2);
