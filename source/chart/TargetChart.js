@@ -4,7 +4,7 @@ export default class TargetChart {
 
     constructor (...args) {
         if (args.length < 1) {
-            console.log('TargetChart: Incorrect arguments.');
+            console.error('TargetChart: Incorrect arguments.');
             return;
         } else if (args.length === 1) {
             this._e = args[0];
