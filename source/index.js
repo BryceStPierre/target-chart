@@ -10,7 +10,7 @@ var measurements = {
 console.log(measurements);*/
 
 var element = document.getElementById('chart');
-var chart = new TargetChart(element, {});
+var chart = new TargetChart(element, { title: 'Chart Title'} );
 chart.data([
     { stdDev: 33, target: 50, value: 17, label: 'YYYYYYYY'},
     { stdDev: 5.4, target: 16, value: 20, label: 'YYYYY' },

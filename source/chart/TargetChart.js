@@ -21,8 +21,9 @@ export default class TargetChart {
         this._o = {
             barHeight: options.barHeight || 50,
             bgColor: options.bgColor || 'transparent',
-            highColor: options.highColor || 'red',
-            lowColor: options.lowColor || 'blue',
+            highColor: options.highColor || '#FF4C3B',
+            lowColor: options.lowColor || '#0072BB',
+            title: options.title || null,
             textColor: options.textColor || '#111',
             font: options.font || 'sans-serif',
             fontSize: options.fontSize || 14,
@@ -39,13 +40,13 @@ export default class TargetChart {
             m: {
                 label: 5,
                 value: 5,
-                title: 50,
+                title: 100,
                 bar: 3 * this._o.barHeight / 4
             }
         };
 
         if (this._o.barHeight === null)
-            this._o.barHeight = ((this._o.height - this._c.m.title) / this._d.length) - this._c.m.bar;
+            this._o.barHeight = (this._o.height - this._c.m.title) / this._d.length - this._c.m.bar;
         else
             this._o.height = this._c.m.title + this._d.length * (this._o.barHeight + this._c.m.bar);
     }
@@ -82,6 +83,24 @@ export default class TargetChart {
                 .text('No data.');
             return;
         }
+
+        if (this._o.title) {
+            svg.append('text')
+                .attr('text-anchor', 'middle')
+                .attr('x', w / 2)
+                .attr('y', 26)
+                .style('font-size', '20px')
+                .style('fill', this._o.textColor)
+                .text(this._o.title);
+        }
+
+        svg.append('line')
+            .attr('x1', w / 2)
+            .attr('y1', this._c.m.title - this._c.m.bar / 2)
+            .attr('x2', w / 2)
+            .attr('y2', h - this._c.m.bar)
+            .style('stroke', '#EEE')
+            .style('stroke-width', '4px')
 
         var labelSize = textSize(svg, this._d.map(d => d.label));
         var valueSize = textSize(svg, this._d.map(d => d.value.toString()))
