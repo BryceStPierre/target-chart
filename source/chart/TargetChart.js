@@ -19,18 +19,18 @@ export default class TargetChart {
 
     options (options) {
         this._o = {
-            barHeight: options.barHeight || 50,
-            bgColor: options.bgColor || 'transparent',
-            highColor: options.highColor || '#FF4C3B',
-            lowColor: options.lowColor || '#0072BB',
-            title: options.title || null,
-            textColor: options.textColor || '#111',
-            font: options.font || 'sans-serif',
-            fontSize: options.fontSize || 14,
+            barHeight: options.barHeight || 20,
+            bgColor: options.bgColor || 'none',
             height: options.height || 350,
+            highColor: options.highColor || '#FF4C3B',
+            font: options.font || 'sans-serif',
+            fontSize: options.fontSize || 12,
+            lowColor: options.lowColor || '#0072BB',
+            showLabels: options.showLabels === undefined ? true : options.showLabels,
+            textColor: options.textColor || '#111',
+            title: options.title || null,
             width: this._e.clientWidth >= 320 ? this._e.clientWidth : 320
         }
-        console.log(this._o);
     }
 
     data (data) {
@@ -40,10 +40,13 @@ export default class TargetChart {
             m: {
                 label: 5,
                 value: 5,
-                title: 100,
+                title: this._o.title ? this._o.barHeight * 4.5 : this._o.barHeight * 3,
                 bar: 3 * this._o.barHeight / 4
             }
         };
+
+        if (!this._o.title && !this._o.showLabels)
+            this._c.m.title = this._o.barHeight * 2;
 
         if (this._o.barHeight === null)
             this._o.barHeight = (this._o.height - this._c.m.title) / this._d.length - this._c.m.bar;
@@ -58,6 +61,7 @@ export default class TargetChart {
 
     render () {
         this.reset();
+        console.log(this._o);
 
         var w = this._o.width,
             h = this._o.height;
@@ -84,24 +88,6 @@ export default class TargetChart {
             return;
         }
 
-        if (this._o.title) {
-            svg.append('text')
-                .attr('text-anchor', 'middle')
-                .attr('x', w / 2)
-                .attr('y', 26)
-                .style('font-size', '20px')
-                .style('fill', this._o.textColor)
-                .text(this._o.title);
-        }
-
-        svg.append('line')
-            .attr('x1', w / 2)
-            .attr('y1', this._c.m.title - this._c.m.bar / 2)
-            .attr('x2', w / 2)
-            .attr('y2', h - this._c.m.bar)
-            .style('stroke', '#EEE')
-            .style('stroke-width', '4px')
-
         var labelSize = textSize(svg, this._d.map(d => d.label));
         var valueSize = textSize(svg, this._d.map(d => d.value.toString()))
 
@@ -111,12 +97,75 @@ export default class TargetChart {
         const barH = this._o.barHeight;
         const barC = w - (2 * labelC + 2 * valueC) - 2 * barH;
 
+        if (this._o.title) {
+            svg.append('text')
+                .attr('text-anchor', 'middle')
+                .attr('x', w / 2)
+                .attr('y', this._c.m.title - 3 * barH)
+                .style('font-size', '16px')
+                .style('fill', this._o.textColor)
+                .text(this._o.title);
+        }
+
+        svg.append('line')
+            .attr('x1', w / 2)
+            .attr('y1', this._c.m.title - this._c.m.bar)
+            .attr('x2', w / 2)
+            .attr('y2', h - this._c.m.bar)
+            .style('stroke', '#EEE')
+            .style('stroke-width', '4px')
+
+        svg.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('x', labelC + valueC + barH)
+            .attr('y', this._c.m.title - 3 * barH / 4)
+            .style('fill', this._o.textColor)
+            .text('-1 STD');
+
+        svg.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('x', labelC + valueC + barH + barC)
+            .attr('y', this._c.m.title - 3 * barH / 4)
+            .style('fill', this._o.textColor)
+            .text('+1 STD');
+
+        if (this._o.showLabels) {
+            svg.append('text')
+                .attr('text-anchor', 'middle')
+                .attr('x', labelC + valueC + barH)
+                .attr('y', this._c.m.title - 2 * barH)
+                .style('fill', this._o.lowColor)
+                .style('font-size', '14px')
+                .text('BELOW');
+
+            svg.append('text')
+                .attr('text-anchor', 'middle')
+                .attr('x', w / 2)
+                .attr('y', this._c.m.title - 2 * barH)
+                .style('fill', this._o.textColor)
+                .style('font-size', '14px')
+                .text('TARGET');
+
+            svg.append('text')
+                .attr('text-anchor', 'middle')
+                .attr('x', labelC + valueC + barH + barC)
+                .attr('y', this._c.m.title - 2 * barH)
+                .style('fill', this._o.highColor)
+                .style('font-size', '14px')
+                .text('ABOVE');
+        }
+
         const n = this._d.length;
 
         for (var y = this._c.m.title, i = 0; y < h, i < n; y += barH + this._c.m.bar, i++) {
+
             const d = this._d[i];
             const below = d.value < d.target;
-            const barW = (Math.abs(d.target - d.value) / d.stdDev) * barC / 2;
+
+            var barP = Math.abs(d.target - d.value) / d.stdDev;
+            barP = barP > 1 ? 1 : barP;
+
+            const barW = barP * barC / 2;
             const barX = below ? w / 2 - barW : w / 2;
 
             svg.append('rect')
@@ -144,21 +193,21 @@ export default class TargetChart {
             svg.append('text')
                 .attr('text-anchor', 'middle')
                 .attr('x', labelC / 2)
-                .attr('y', y + (barH / 2) + (this._o.fontSize / 2))
+                .attr('y', y + (barH / 2) + ((this._o.fontSize - 2) / 2))
                 .attr('fill', this._o.textColor)
                 .text(d.label);
 
             svg.append('text')
                 .attr('text-anchor', 'middle')
                 .attr('x', w - labelC / 2)
-                .attr('y', y + (barH / 2) + (this._o.fontSize / 2))
+                .attr('y', y + (barH / 2) + ((this._o.fontSize - 2) / 2))
                 .attr('fill', this._o.textColor)
                 .text(d.label);
 
             svg.append('text')
                 .attr('text-anchor', 'middle')
                 .attr('x', below ? labelC + valueC / 2 : w - labelC - valueC / 2)
-                .attr('y', y + (barH / 2) + ((this._o.fontSize - 2) / 2))        // Tested -2 for precision?
+                .attr('y', y + (barH / 2) + ((this._o.fontSize - 2) / 2))
                 .attr('fill', this._o.textColor)
                 .text(d.value);
         }
