@@ -5,7 +5,7 @@ import TargetChart from './chart/TargetChart';
 var element = document.getElementById('chart');
 var chart = new TargetChart(element, { 
     title: 'Chart Title',
-    barHeight: 40
+    barHeight: 20
 });
 chart.data([
     { stdDev: 33, target: 50, value: 17, label: 'Metric1'},

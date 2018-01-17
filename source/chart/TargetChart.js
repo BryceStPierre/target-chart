@@ -101,7 +101,7 @@ export default class TargetChart {
             svg.append('text')
                 .attr('text-anchor', 'middle')
                 .attr('x', w / 2)
-                .attr('y', this._c.m.title - 3 * barH)
+                .attr('y', this._c.m.title - 10 * barH / 3)
                 .style('font-size', '16px')
                 .style('fill', this._o.textColor)
                 .text(this._o.title);
@@ -113,7 +113,7 @@ export default class TargetChart {
             .attr('x2', w / 2)
             .attr('y2', h - this._c.m.bar)
             .style('stroke', '#EEE')
-            .style('stroke-width', '4px')
+            .style('stroke-width', '3px')
 
         svg.append('text')
             .attr('text-anchor', 'middle')
@@ -176,19 +176,26 @@ export default class TargetChart {
                 .style('fill', '#EEE');
 
             svg.append('rect')
-                .attr('x', barX)
+                .attr('x', w / 2)
                 .attr('y', y)
-                .attr('width', barW)
+                .attr('width', 0)
                 .attr('height', barH)
-                .style('fill', below ? this._o.lowColor : this._o.highColor);
+                .style('fill', below ? this._o.lowColor : this._o.highColor)
+                .transition()
+                .duration(1500)
+                .attr('x', barX)
+                .attr('width', barW);
                 
             svg.append('circle')
-                .attr('cx', below ? barX : w / 2 + barW)
+                .attr('cx', w / 2)
                 .attr('cy', y + barH / 2)
                 .attr('r', barH / 2 + this._o.fontSize / 2)
                 .style('fill', '#FFF')
                 .style('stroke', below ? this._o.lowColor : this._o.highColor)
-                .style('stroke-width', '1px');
+                .style('stroke-width', '1px')
+                .transition()
+                .duration(1500)
+                .attr('cx', below ? barX : w / 2 + barW);
 
             svg.append('text')
                 .attr('text-anchor', 'middle')
