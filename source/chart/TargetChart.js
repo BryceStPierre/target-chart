@@ -54,7 +54,7 @@ export default class TargetChart {
 
     render () {
         this.reset();
-        console.log(this._o);
+        //console.log(this._o);
 
         var w = this._o.width,
             h = this._o.height;
