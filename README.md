@@ -4,14 +4,6 @@
 
 **Target Chart** is a customizable target chart based upon D3.js that resembles a comparative histogram, with options such as comparison to +/- standard deviations, and more.
 
-## Resources
-
-* [Item1](#item1)
-* [Item1](#item1)
-* [Item1](#item1)
-* [Item1](#item1)
-* [Item1](#item1)
-
 ## Installing
 
 Download the [latest release](#latest).
