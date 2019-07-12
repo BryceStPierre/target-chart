@@ -24,6 +24,7 @@
   "homepage": "https://github.com/BryceStPierre/target-chart#readme",
   "dependencies": {
     "d3": "^4.12.2",
+    "lodash": "^4.17.14",
     "querystringify": "^2.1.1",
     "ssri": "^5.2.4"
   },
@@ -34,6 +35,6 @@
     "jquery": "^3.4.1",
     "uglifyjs-webpack-plugin": "^1.1.6",
     "webpack": "^3.10.0",
-    "webpack-dev-server": "^3.1.14"
+    "webpack-dev-server": "^3.7.2"
   }
 }
